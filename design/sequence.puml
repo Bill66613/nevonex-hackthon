@@ -1,0 +1,27 @@
+@startuml
+activate Server
+Server -> Server: GetRequirement()
+activate Server
+deactivate Server
+Server -> Server: SortRequirement()
+activate Server
+deactivate Server
+Server -> Handler: AssignTask()
+activate Handler
+Handler -> Handler: CheckAvailableTask()
+activate Handler
+alt true
+  Handler -> Handler: ExecuteTask()
+  activate Handler
+  deactivate Handler
+else false
+  Handler -> Handler: SetState()
+  activate Handler
+  deactivate Handler
+  Handler --> Server: DecreaseNumberOfActiveHandlers()
+  deactivate Handler
+  Server -> Server: WriteReport()
+  activate Server
+  deactivate Server
+end
+@enduml

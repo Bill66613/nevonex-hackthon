@@ -1,0 +1,8 @@
+@startuml
+
+component Server
+component Handler
+Server --* Handler
+
+
+@enduml

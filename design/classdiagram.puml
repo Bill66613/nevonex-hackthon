@@ -1,0 +1,89 @@
+@startuml
+
+
+
+
+
+/' Objects '/
+
+class Handler {
+	-mTaskQueue : SafeQueue<uint64_t>
+	-mName : std::string
+	-mState : handler_state_e
+	-mTotalWork : uint64_t
+	-mWorkLog : uint64_t
+
+	-CheckAvailableTask() : bool
+	-SetState(handler_state_e newState) : void
+	+GetState() : handler_state_e
+	+GetName() : std::string
+	+GetTotalWork() : uint64_t
+	+GetWorkLog() : uint64_t
+	+ExecuteTask() : void
+	+ReceiveTask() : void
+}
+
+
+class SafeQueue <template<class T>> {
+	-m : mutable std::mutex
+	-c : std::condition_variable
+	-q : std::queue<T>
+
+	+SafeQueue()
+	+~SafeQueue()
+	+back() : T
+	+front() : T
+	+pop() : T
+	+empty() : bool {query}
+	+size() : unsigned long {query}
+	+push(T t) : void
+}
+
+
+class Server {
+	-mListTasks : SafeQueue<uint64_t>
+	-mListHandlers : std::vector<Handler>
+	-mNumberOfHandlers : uint8_t
+	+AssignTask() : void
+	+DecreaseNumberOfActiveHandlers() : void
+	+GetRequirement(std::string& rFilePath) : void
+	+ReadReport() : void
+	+SortRequirement() : void
+	+WriteReport() : void
+}
+
+
+enum HANDLER_STATE_E {
+	ACTIVE
+	INACTIVE
+}
+
+
+
+
+
+/' Inheritance relationships '/
+
+
+
+
+/' Aggregation relationships '/
+left to right direction
+.SafeQueue --* .Handler 
+
+
+.Server *-- .Handler
+
+
+.Server *-- .SafeQueue
+
+
+
+
+
+
+/' Nested objects '/
+
+
+
+@enduml
