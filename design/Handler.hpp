@@ -24,6 +24,8 @@ private:
   void SetState(handler_state_e newState);
 
 public:
+  Handler ()
+  ~Handler()
   void        ExecuteTask();
   void        ReceiveTask();
   std::string GetName();

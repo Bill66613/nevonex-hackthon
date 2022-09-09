@@ -7,20 +7,22 @@
 /' Objects '/
 
 class Handler {
-	-mTaskQueue : SafeQueue<uint64_t>
 	-mName : std::string
 	-mState : handler_state_e
-	-mTotalWork : uint64_t
 	-mWorkLog : uint64_t
-
+	-mTotalWork : uint64_t
+	-mTaskQueue : SafeQueue<uint64_t>
+	+Handler() 
+	+~Handler() 
 	-CheckAvailableTask() : bool
-	-SetState(handler_state_e newState) : void
-	+GetState() : handler_state_e
+	-SetState(handler_state_e newState): void
+	+ReceiveTask(uint64_t task) : void
+	+ExecuteTask(): void
 	+GetName() : std::string
+	+GetState() : handler_state_e
 	+GetTotalWork() : uint64_t
 	+GetWorkLog() : uint64_t
-	+ExecuteTask() : void
-	+ReceiveTask() : void
+	+LogWork(uint64_t workLog) : void
 }
 
 
@@ -28,7 +30,6 @@ class SafeQueue <template<class T>> {
 	-m : mutable std::mutex
 	-c : std::condition_variable
 	-q : std::queue<T>
-
 	+SafeQueue()
 	+~SafeQueue()
 	+back() : T
@@ -44,11 +45,13 @@ class Server {
 	-mListTasks : SafeQueue<uint64_t>
 	-mListHandlers : std::vector<Handler>
 	-mNumberOfHandlers : uint8_t
+	+Server()
+	+~Server()
+	+GetRequirement(std::string& rFilePath) : void
+	+SortRequirement() : void
 	+AssignTask() : void
 	+DecreaseNumberOfActiveHandlers() : void
-	+GetRequirement(std::string& rFilePath) : void
 	+ReadReport() : void
-	+SortRequirement() : void
 	+WriteReport() : void
 }
 
@@ -69,7 +72,7 @@ enum HANDLER_STATE_E {
 
 /' Aggregation relationships '/
 left to right direction
-.SafeQueue --* .Handler 
+.Handler *-- .SafeQueue
 
 
 .Server *-- .Handler

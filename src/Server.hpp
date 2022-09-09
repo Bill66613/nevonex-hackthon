@@ -1,8 +1,8 @@
 #pragma once
 #include "Handler.hpp"
 #include "SafeQueue.h"
-#include <fstream>
-#include <iostream>
+
+#define MAX_HANDLERS 10
 
 class Server
 {
@@ -10,6 +10,7 @@ private:
   std::vector<Handler> mListHandlers;
   SafeQueue<uint64_t>  mListTasks;
   uint8_t              mNumberOfHandlers;
+  uint8_t              mMaxHandlers;
 
 public:
   Server ();
@@ -21,3 +22,5 @@ public:
   void WriteReport    ();
   void ReadReport     ();
 };
+
+extern Server Boss;
