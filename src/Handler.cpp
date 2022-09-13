@@ -20,6 +20,15 @@ Handler::~Handler()
  */
 bool Handler::CheckAvailableTask()
 {
+  if (mTaskQueue.empty())
+  {
+    return false;
+  }
+  else
+  {
+    return true;
+  }
+  return true;
 }
 
 /**
@@ -29,6 +38,7 @@ bool Handler::CheckAvailableTask()
  */
 void Handler::SetState(handler_state_e newState)
 {
+  mState = newState;
 }
 
 /**
@@ -66,4 +76,5 @@ void Handler::ExecuteTask()
  */
 void Handler::LogWork(uint64_t workLog)
 {
+  mWorkLog += workLog;
 }

@@ -8,6 +8,12 @@ Server::Server()
 {
 }
 
+Server::Server(std::string &rFilePath)
+: mMaxHandlers(MAX_HANDLERS)
+, mRequirementPath(rFilePath)
+{
+}
+
 Server::~Server()
 {
 }
@@ -17,15 +23,32 @@ Server::~Server()
  * 
  * @param rFilePath 
  */
-void Server::GetRequirement(std::string &rFilePath)
+void Server::UpdateRequirementPath(std::string &rFilePath)
 {
-  std::ifstream file(rFilePath);
+  mRequirementPath = rFilePath;
+}
+
+/**
+ * @brief 
+ * 
+ * @param rFilePath 
+ */
+void Server::GetRequirement()
+{
+  std::ifstream file(mRequirementPath);
   int number;
-  while (file >> number)
+  if (file.is_open())
   {
-    mListTasks.push(number);
+    while (file >> number)
+    {
+      mListTasks.push(number);
+    }
+    file.close();
   }
-  file.close();
+  else
+  {
+    printf("Cannot open file");
+  }
 }
 
 /**
@@ -44,7 +67,6 @@ void Server::SortRequirement()
  */
 void Server::AssignTask()
 {
-
 }
 
 /**
@@ -53,7 +75,7 @@ void Server::AssignTask()
  */
 void Server::DecreaseNumberOfActiveHandlers()
 {
-  
+  mNumberOfHandlers--;
 }
 
 /**
@@ -62,6 +84,19 @@ void Server::DecreaseNumberOfActiveHandlers()
  */
 void Server::ReadReport()
 {
+  std::ifstream file(mRequirementPath);
+  if (file.is_open())
+  {
+    std::string line;
+    while(getline(file, line))
+    {
+      std::cout << line << std::endl;
+    }
+  }
+  else
+  {
+    printf("Cannot open file");
+  }
 }
 
 /**
@@ -70,6 +105,20 @@ void Server::ReadReport()
  */
 void Server::WriteReport()
 {
+  std::ofstream file(mRequirementPath, std::ofstream::out);
+  if (file.is_open())
+  {
+    int i = 0;
+    while(!mListHandlers.empty())
+    {
+      file << "Name: " << mListHandlers[i].GetName() << " - Worklog: " << mListHandlers[i].GetWorkLog() << "\n";
+    }
+    file.close();
+  }
+  else
+  {
+    printf("Cannot open file");
+  }
 }
 
 Server Boss;
