@@ -1,5 +1,16 @@
+/**
+ * @file Handler.hpp
+ * @author your name (you@domain.com)
+ * @brief
+ * @version 0.1
+ * @date 2022-09-14
+ *
+ * @copyright Copyright (c) 2022
+ *
+ */
 #pragma once
 #include <string>
+#include <memory>
 #include "SafeQueue.h"
 
 enum HANDLER_STATE_E
@@ -21,6 +32,7 @@ private:
   void * ServerNotifier;
 
 public:
+  Handler();
   Handler(void * serverNotifier);
   ~Handler();
 
@@ -37,4 +49,6 @@ public:
   uint64_t        GetTotalWork() { return mTotalWork; };
   void            LogWork     (uint64_t workLog);
 
-}; 
+};
+
+typedef std::shared_ptr<Handler> HandlerPtr;

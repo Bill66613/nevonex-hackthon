@@ -1,3 +1,13 @@
+/**
+ * @file Handler.cpp
+ * @author your name (you@domain.com)
+ * @brief
+ * @version 0.1
+ * @date 2022-09-14
+ *
+ * @copyright Copyright (c) 2022
+ *
+ */
 #include <thread>
 #include <chrono>
 #include "Handler.hpp"
@@ -13,10 +23,10 @@ Handler::~Handler()
 }
 
 /**
- * @brief 
- * 
- * @return true 
- * @return false 
+ * @brief
+ *
+ * @return true
+ * @return false
  */
 bool Handler::CheckAvailableTask()
 {
@@ -32,9 +42,9 @@ bool Handler::CheckAvailableTask()
 }
 
 /**
- * @brief 
- * 
- * @param newState 
+ * @brief
+ *
+ * @param newState
  */
 void Handler::SetState(handler_state_e newState)
 {
@@ -42,9 +52,9 @@ void Handler::SetState(handler_state_e newState)
 }
 
 /**
- * @brief 
- * 
- * @param task 
+ * @brief
+ *
+ * @param task
  */
 void Handler::ReceiveTask(uint64_t task)
 {
@@ -52,8 +62,8 @@ void Handler::ReceiveTask(uint64_t task)
 }
 
 /**
- * @brief 
- * 
+ * @brief
+ *
  */
 void Handler::ExecuteTask()
 {
@@ -70,9 +80,9 @@ void Handler::ExecuteTask()
 }
 
 /**
- * @brief 
- * 
- * @param workLog 
+ * @brief
+ *
+ * @param workLog
  */
 void Handler::LogWork(uint64_t workLog)
 {

@@ -1,3 +1,13 @@
+/**
+ * @file Server.hpp
+ * @author your name (you@domain.com)
+ * @brief
+ * @version 0.1
+ * @date 2022-09-14
+ *
+ * @copyright Copyright (c) 2022
+ *
+ */
 #pragma once
 #include "Handler.hpp"
 #include "SafeQueue.h"
@@ -7,11 +17,11 @@
 class Server
 {
 private:
-  std::string          mRequirementPath;
-  std::vector<Handler> mListHandlers;
-  SafeQueue<uint64_t>  mListTasks;
-  uint8_t              mNumberOfHandlers;
-  uint8_t              mMaxHandlers;
+  std::string             mRequirementPath;
+  std::vector<HandlerPtr> mListHandlers;
+  SafeQueue<uint64_t>     mListTasks;
+  uint8_t                 mNumberOfHandlers;
+  uint8_t                 mMaxHandlers;
 
 public:
   Server ();

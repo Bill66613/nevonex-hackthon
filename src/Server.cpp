@@ -1,3 +1,13 @@
+/**
+ * @file Server.cpp
+ * @author your name (you@domain.com)
+ * @brief
+ * @version 0.1
+ * @date 2022-09-14
+ *
+ * @copyright Copyright (c) 2022
+ *
+ */
 #include "Server.hpp"
 #include <fstream>
 #include <iostream>
@@ -19,9 +29,9 @@ Server::~Server()
 }
 
 /**
- * @brief 
- * 
- * @param rFilePath 
+ * @brief In order to update the path of requirement apart from contructor, use this function
+ *
+ * @param rFilePath
  */
 void Server::UpdateRequirementPath(std::string &rFilePath)
 {
@@ -29,9 +39,9 @@ void Server::UpdateRequirementPath(std::string &rFilePath)
 }
 
 /**
- * @brief 
- * 
- * @param rFilePath 
+ * @brief Parse the requirement file from mRequirementPath, push data to mListTasks
+ *
+ * @param rFilePath
  */
 void Server::GetRequirement()
 {
@@ -47,31 +57,61 @@ void Server::GetRequirement()
   }
   else
   {
-    printf("Cannot open file");
+    printf("[ERROR] Cannot open file");
   }
 }
 
 /**
- * @brief 
- * 
+ * @brief Sort the requirement
+ *
  */
 void Server::SortRequirement()
-{ 
+{
 }
 
 /**
  * @brief Create handler for each task: create thread / handler
  *  Maximum number of handlers = 10
  *  If reaches, assign tasks to existing handlers, with the lowest task weight
- * 
+ *
  */
 void Server::AssignTask()
 {
+  while (!mListTasks.empty())
+  {
+    if (mListHandlers.size() < 10)
+    {
+      // Create handler
+      HandlerPtr new_handler = std::make_shared<Handler>();
+      mListHandlers.push_back(new_handler);
+      mListHandlers.back()->ReceiveTask(mListTasks.front());
+      mListHandlers.back()->ExecuteTask();
+      mListTasks.pop();
+    }
+    else
+    {
+      // Assign to an existing handler
+
+      // Get the min total work of handlers
+      uint64_t min_work = UINT64_MAX;
+      HandlerPtr chosen_handler;
+      for (auto &handler_itr : mListHandlers)
+      {
+        if (min_work > handler_itr->GetTotalWork())
+        {
+          min_work = handler_itr->GetTotalWork();
+          chosen_handler = handler_itr;
+        }
+      }
+      chosen_handler->ReceiveTask(mListTasks.front());
+      mListTasks.pop();
+    }
+  }
 }
 
 /**
- * @brief 
- * 
+ * @brief
+ *
  */
 void Server::DecreaseNumberOfActiveHandlers()
 {
@@ -79,8 +119,8 @@ void Server::DecreaseNumberOfActiveHandlers()
 }
 
 /**
- * @brief 
- * 
+ * @brief
+ *
  */
 void Server::ReadReport()
 {
@@ -100,8 +140,8 @@ void Server::ReadReport()
 }
 
 /**
- * @brief 
- * 
+ * @brief
+ *
  */
 void Server::WriteReport()
 {
@@ -111,7 +151,7 @@ void Server::WriteReport()
     int i = 0;
     while(!mListHandlers.empty())
     {
-      file << "Name: " << mListHandlers[i].GetName() << " - Worklog: " << mListHandlers[i].GetWorkLog() << "\n";
+      file << "Name: " << mListHandlers[i]->GetName() << " - Worklog: " << mListHandlers[i]->GetWorkLog() << "\n";
     }
     file.close();
   }
