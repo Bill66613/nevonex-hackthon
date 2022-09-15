@@ -9,50 +9,56 @@
 class Handler {
 	-mName : std::string
 	-mState : handler_state_e
-	-mWorkLog : uint64_t
 	-mTotalWork : uint64_t
+	-mWorkLog : uint64_t
 	-mTaskQueue : SafeQueue<uint64_t>
-	+Handler() 
-	+~Handler() 
+	-ServerNotifier : void*
+	+Handler()
+	+Handler(void* serverNotifier)
+	+~Handler()
 	-CheckAvailableTask() : bool
-	-SetState(handler_state_e newState): void
+	-SetState(handler_state_e newState) : void
 	+ReceiveTask(uint64_t task) : void
-	+ExecuteTask(): void
+	+ExecuteTask() : void
 	+GetName() : std::string
 	+GetState() : handler_state_e
-	+GetTotalWork() : uint64_t
 	+GetWorkLog() : uint64_t
+	+GetTotalWork() : uint64_t
 	+LogWork(uint64_t workLog) : void
 }
 
 
 class SafeQueue <template<class T>> {
+	-q : std::queue<T>
 	-m : mutable std::mutex
 	-c : std::condition_variable
-	-q : std::queue<T>
 	+SafeQueue()
 	+~SafeQueue()
-	+back() : T
-	+front() : T
-	+pop() : T
 	+empty() : bool {query}
 	+size() : unsigned long {query}
+	+front() : T
+	+back() : T
 	+push(T t) : void
+	+pop() : T
 }
 
 
 class Server {
+	-mRequirementPath : std::string
+	-mListHandlers : std::vector<HandlerPtr>
 	-mListTasks : SafeQueue<uint64_t>
-	-mListHandlers : std::vector<Handler>
 	-mNumberOfHandlers : uint8_t
+	-mMaxHandlers : uint8_t
 	+Server()
+	+Server(std::string& rFilePath)
 	+~Server()
-	+GetRequirement(std::string& rFilePath) : void
+	+UpdateRequirementPath(std::string& rFilePath) : void
+	+GetRequirement() : void
 	+SortRequirement() : void
 	+AssignTask() : void
 	+DecreaseNumberOfActiveHandlers() : void
-	+ReadReport() : void
 	+WriteReport() : void
+	+ReadReport() : void
 }
 
 
@@ -71,11 +77,8 @@ enum HANDLER_STATE_E {
 
 
 /' Aggregation relationships '/
-left to right direction
+
 .Handler *-- .SafeQueue
-
-
-.Server *-- .Handler
 
 
 .Server *-- .SafeQueue
