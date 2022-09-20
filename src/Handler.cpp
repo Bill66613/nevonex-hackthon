@@ -10,11 +10,15 @@
  */
 #include <thread>
 #include <chrono>
+#include <fstream>
+#include <iostream>
 #include "Handler.hpp"
 #include "Server.hpp"
 
-Handler::Handler(void * serverNotifier)
-: ServerNotifier(serverNotifier)
+Handler::Handler(std::string name, Server &rServer, std::string &logFile)
+: mName(name)
+, rServer(rServer)
+, mLogFile(logFile)
 {
 }
 
@@ -44,16 +48,6 @@ bool Handler::CheckAvailableTask()
 /**
  * @brief
  *
- * @param newState
- */
-void Handler::SetState(handler_state_e newState)
-{
-  mState = newState;
-}
-
-/**
- * @brief
- *
  * @param task
  */
 void Handler::ReceiveTask(uint64_t task)
@@ -65,18 +59,27 @@ void Handler::ReceiveTask(uint64_t task)
  * @brief
  *
  */
-void Handler::ExecuteTask()
+void Handler::ExecuteTaskProc()
 {
-  SetState(handler_state_e::ACTIVE);
-  while (!mTaskQueue.empty())
+  while (CheckAvailableTask())
   {
+    printf("Name: %s - %lu\n", mName.c_str(), mTaskQueue.front());
     std::this_thread::sleep_for(std::chrono::seconds(mTaskQueue.front()));
     LogWork(mTaskQueue.front());
     mTaskQueue.pop();
   }
-  SetState(handler_state_e::INACTIVE);
+}
+
+/**
+ * @brief
+ *
+ */
+void Handler::ExecuteTask()
+{
+  std::thread ExecuteTaskThread(ExecuteTaskProc);
+  ExecuteTaskThread.join();
   // NotifyServer
-  Boss.DecreaseNumberOfActiveHandlers();
+  rServer.DecreaseNumberOfActiveHandlers();
 }
 
 /**
@@ -86,5 +89,15 @@ void Handler::ExecuteTask()
  */
 void Handler::LogWork(uint64_t workLog)
 {
-  mWorkLog += workLog;
+  std::ofstream file(mLogFile, std::ios::app);
+  if (file.is_open())
+  {
+    file << "Name: " << this->GetName() << " - Log work: " << workLog << "\n";
+    mWorkLog += workLog;
+    file.close();
+  }
+  else
+  {
+    printf("[ERROR] Cannot open file\n");
+  }
 }

@@ -9,8 +9,10 @@
  *
  */
 #pragma once
-#include "Handler.hpp"
 #include "SafeQueue.h"
+#include <thread>
+#include "Handler.hpp"
+
 
 #define MAX_HANDLERS 10
 
@@ -18,14 +20,16 @@ class Server
 {
 private:
   std::string             mRequirementPath;
+  std::string             mLogFile;
   std::vector<HandlerPtr> mListHandlers;
   SafeQueue<uint64_t>     mListTasks;
   uint8_t                 mNumberOfHandlers;
   uint8_t                 mMaxHandlers;
+  std::mutex              mMutex;
 
 public:
   Server ();
-  Server (std::string &rFilePath);
+  Server (std::string &rFilePath, std::string &rLogFile);
   ~Server();
 
   void UpdateRequirementPath         (std::string &rFilePath);
@@ -36,5 +40,3 @@ public:
   void WriteReport                   ();
   void ReadReport                    ();
 };
-
-extern Server Boss;
