@@ -12,6 +12,7 @@
 #include <fstream>
 #include <iostream>
 #include <thread>
+#include <vector>
 
 Server::Server()
 : mMaxHandlers(MAX_HANDLERS)
@@ -60,13 +61,44 @@ void Server::GetRequirement()
     printf("[ERROR] Cannot open file");
   }
 }
-
 /**
- * @brief Sort the requirement
+ * @brief Helping function for sort requirement: Heapify
+ *  The left and right child cannot exceed the root value
  *
  */
+template<class T>
+void heapify(vector <T> &arr, unsigned int N, unsigned int index){
+
+    unsigned int largest = index;
+    unsigned int lc = 2 * index + 1;
+    unsigned int rc = 2 * index + 2;
+
+    if (lc < N && arr[lc] > arr[largest])
+        largest = lc;
+    if (rc < N && arr[rc] > arr[largest])
+        largest = rc;
+
+    if (largest != index) {
+        swap(arr[index], arr[largest]);
+        heapify(arr, N, largest);
+    }
+}
+/**
+ * @brief Sort the requirement : Heap sort
+ *
+ */
+
 void Server::SortRequirement()
 {
+  // Build max heap
+  for(unsigned int i = mListTasks.size()/2 - 1; i >= 0 ; i--){
+    heapify(mListTasks,mListTasks.size(),i);
+  }
+
+  for(unsigned int i = mListTasks.size() - 1; i > 0; i--){
+    swap(mListTasks[0],mListTasks[i]);
+    heapify(mListTasks,i,0);
+  }
 }
 
 /**
