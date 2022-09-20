@@ -41,7 +41,6 @@ class NevonexHackathon(ConanFile):
 
     def package(self):
         self.copy("*.so", dst="plugins/", src="lib/", keep_path=True)
-        self.copy("*", dst="plugins/Conf/", src="Conf/", keep_path=True)
 
     def package_info(self):
         self.cpp_info.libs = ["nevonex_hackathon"]

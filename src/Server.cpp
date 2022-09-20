@@ -9,6 +9,7 @@
  *
  */
 #include "Server.hpp"
+#include "Handler.hpp"
 #include <fstream>
 #include <iostream>
 #include <thread>
@@ -19,9 +20,10 @@ Server::Server()
 {
 }
 
-Server::Server(std::string &rFilePath)
+Server::Server(std::string &rFilePath, std::string &rLogFile)
 : mMaxHandlers(MAX_HANDLERS)
 , mRequirementPath(rFilePath)
+, mLogFile(rLogFile)
 {
 }
 
@@ -46,6 +48,7 @@ void Server::UpdateRequirementPath(std::string &rFilePath)
  */
 void Server::GetRequirement()
 {
+  printf("[INFO] Getting requirements\n");
   std::ifstream file(mRequirementPath);
   int number;
   if (file.is_open())
@@ -58,8 +61,9 @@ void Server::GetRequirement()
   }
   else
   {
-    printf("[ERROR] Cannot open file");
+    printf("[ERROR] Cannot open file\n");
   }
+  printf("[INFO] Finish getting requirements\n");
 }
 /**
  * @brief Helping function for sort requirement: Heapify
@@ -109,21 +113,23 @@ void Server::SortRequirement()
  */
 void Server::AssignTask()
 {
+  printf("[INFO] Assigning requirements\n");
+  int i = 1;
   while (!mListTasks.empty())
   {
     if (mListHandlers.size() < 10)
     {
       // Create handler
-      HandlerPtr new_handler = std::make_shared<Handler>();
+      HandlerPtr new_handler = std::make_shared<Handler>(std::to_string(i), *this, mLogFile);
       mListHandlers.push_back(new_handler);
       mListHandlers.back()->ReceiveTask(mListTasks.front());
       mListHandlers.back()->ExecuteTask();
       mListTasks.pop();
+      i++;
     }
     else
     {
       // Assign to an existing handler
-
       // Get the min total work of handlers
       uint64_t min_work = UINT64_MAX;
       HandlerPtr chosen_handler;
@@ -139,6 +145,7 @@ void Server::AssignTask()
       mListTasks.pop();
     }
   }
+  printf("[INFO] Finish assigning requirements\n");
 }
 
 /**
@@ -147,29 +154,11 @@ void Server::AssignTask()
  */
 void Server::DecreaseNumberOfActiveHandlers()
 {
+  printf("[DEBUG] Decrease\n");
+  std::lock_guard <std::mutex> lk(this->mMutex);
   mNumberOfHandlers--;
 }
 
-/**
- * @brief
- *
- */
-void Server::ReadReport()
-{
-  std::ifstream file(mRequirementPath);
-  if (file.is_open())
-  {
-    std::string line;
-    while(getline(file, line))
-    {
-      std::cout << line << std::endl;
-    }
-  }
-  else
-  {
-    printf("Cannot open file");
-  }
-}
 
 /**
  * @brief
@@ -177,6 +166,13 @@ void Server::ReadReport()
  */
 void Server::WriteReport()
 {
+  while (true)
+  {
+    if (mNumberOfHandlers == 0)
+    {
+      break;
+    }
+  }
   std::ofstream file(mRequirementPath, std::ofstream::out);
   if (file.is_open())
   {
@@ -189,8 +185,28 @@ void Server::WriteReport()
   }
   else
   {
-    printf("Cannot open file");
+    printf("[ERROR] Cannot open file\n");
   }
 }
 
-Server Boss;
+
+/**
+ * @brief
+ *
+ */
+void Server::ReadReport()
+{
+  std::ifstream file(mLogFile);
+  if (file.is_open())
+  {
+    std::string line;
+    while(getline(file, line))
+    {
+      std::cout << line << std::endl;
+    }
+  }
+  else
+  {
+    printf("[ERROR] Cannot open file\n");
+  }
+}
