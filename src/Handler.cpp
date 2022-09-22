@@ -76,7 +76,7 @@ void Handler::ExecuteTaskProc()
  */
 void Handler::ExecuteTask()
 {
-  std::thread ExecuteTaskThread(ExecuteTaskProc);
+  std::thread ExecuteTaskThread(&Handler::ExecuteTaskProc, this);
   ExecuteTaskThread.join();
   // NotifyServer
   rServer.DecreaseNumberOfActiveHandlers();

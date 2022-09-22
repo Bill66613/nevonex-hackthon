@@ -9,8 +9,9 @@
  *
  */
 #pragma once
-#include "SafeQueue.h"
 #include <thread>
+
+#include "SafeQueue.h"
 #include "Handler.hpp"
 
 
@@ -22,7 +23,7 @@ private:
   std::string             mRequirementPath;
   std::string             mLogFile;
   std::vector<HandlerPtr> mListHandlers;
-  SafeQueue<uint64_t>     mListTasks;
+  std::vector<uint64_t>   mListTasks;
   uint8_t                 mNumberOfHandlers;
   uint8_t                 mMaxHandlers;
   std::mutex              mMutex;
