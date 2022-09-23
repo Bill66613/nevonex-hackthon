@@ -9,6 +9,7 @@
  *
  */
 #include <thread>
+#include <pthread.h>
 #include <chrono>
 #include <fstream>
 #include <iostream>
@@ -50,7 +51,7 @@ bool Handler::CheckAvailableTask()
  *
  * @param task
  */
-void Handler::ReceiveTask(uint64_t task)
+void Handler::ReceiveTask(uint8_t task)
 {
   mTaskQueue.push(task);
 }
@@ -76,8 +77,9 @@ void Handler::ExecuteTaskProc()
  */
 void Handler::ExecuteTask()
 {
-  std::thread ExecuteTaskThread(&Handler::ExecuteTaskProc, this);
-  ExecuteTaskThread.join();
+  // std::thread ExecuteTaskThread(&Handler::ExecuteTaskProc, this);
+  // ExecuteTaskThread.join();
+  ExecuteTaskProc();
   // NotifyServer
   rServer.DecreaseNumberOfActiveHandlers();
 }
@@ -87,7 +89,7 @@ void Handler::ExecuteTask()
  *
  * @param workLog
  */
-void Handler::LogWork(uint64_t workLog)
+void Handler::LogWork(uint8_t workLog)
 {
   std::ofstream file(mLogFile, std::ios::app);
   if (file.is_open())

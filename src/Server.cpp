@@ -72,7 +72,7 @@ void Server::GetRequirement()
  *
  */
 template <class T>
-void heapify(vector<T> &arr, unsigned int N, unsigned int index)
+void heapify(std::vector<T> &arr, unsigned int N, unsigned int index)
 {
   unsigned int largest = index;
   unsigned int lc = 2 * index + 1;
@@ -83,8 +83,8 @@ void heapify(vector<T> &arr, unsigned int N, unsigned int index)
 
   if (largest != index)
   {
-    swap(arr[index], arr[largest]);
-    heapify(arr, N, largest);
+    std::swap(arr[index], arr[largest]);
+    heapify<T>(arr, N, largest);
   }
 }
 
@@ -97,13 +97,13 @@ void Server::SortRequirement()
   // Build max heap
   for (unsigned int i = mListTasks.size() / 2 - 1; i >= 0; i--)
   {
-    heapify(mListTasks, mListTasks.size(), i);
+    heapify<uint8_t>(mListTasks, mListTasks.size(), i);
   }
 
   for (unsigned int i = mListTasks.size() - 1; i > 0; i--)
   {
-    swap(mListTasks[0], mListTasks[i]);
-    heapify(mListTasks, i, 0);
+    std::swap(mListTasks[0], mListTasks[i]);
+    heapify<uint8_t>(mListTasks, i, 0);
   }
 }
 
@@ -124,9 +124,10 @@ void Server::AssignTask()
       // Create handler
       HandlerPtr new_handler = std::make_shared<Handler>(std::to_string(i), *this, mLogFile);
       mListHandlers.push_back(new_handler);
-      mListHandlers.back()->ReceiveTask(mListTasks.front());
+      auto task = mListTasks.begin();
+      mListHandlers.back()->ReceiveTask(*task);
       mListHandlers.back()->ExecuteTask();
-      mListTasks.pop();
+      mListTasks.erase(task);
       i++;
     }
     else
@@ -143,8 +144,9 @@ void Server::AssignTask()
           chosen_handler = handler_itr;
         }
       }
-      chosen_handler->ReceiveTask(mListTasks.front());
-      mListTasks.pop();
+      auto task = mListTasks.begin();
+      chosen_handler->ReceiveTask(*task);
+      mListTasks.erase(task);
     }
   }
   printf("[INFO] Finish assigning requirements\n");
