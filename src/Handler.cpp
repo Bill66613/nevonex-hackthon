@@ -9,7 +9,7 @@
  *
  */
 #include <thread>
-#include <pthread.h>
+// #include <pthread.h>
 #include <chrono>
 #include <fstream>
 #include <iostream>
@@ -17,7 +17,7 @@
 #include "Server.hpp"
 
 Handler::Handler(std::string name, Server &rServer, std::string &logFile)
-: mName(name)
+: mName("Handler " + name)
 , rServer(rServer)
 , mLogFile(logFile)
 {
@@ -35,15 +35,7 @@ Handler::~Handler()
  */
 bool Handler::CheckAvailableTask()
 {
-  if (mTaskQueue.empty())
-  {
-    return false;
-  }
-  else
-  {
-    return true;
-  }
-  return true;
+  return (mTaskQueue.empty() ? false : true);
 }
 
 /**
