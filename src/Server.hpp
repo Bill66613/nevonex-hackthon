@@ -23,7 +23,7 @@ private:
   std::string             mRequirementPath;
   std::string             mLogFile;
   std::vector<HandlerPtr> mListHandlers;
-  std::vector<uint8_t>   mListTasks;
+  std::vector<uint8_t>    mListTasks;
   uint8_t                 mNumberOfHandlers;
   uint8_t                 mMaxHandlers;
   std::mutex              mMutex;

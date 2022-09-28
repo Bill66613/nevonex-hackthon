@@ -84,7 +84,7 @@ void heapify(std::vector<T> &arr, unsigned int N, unsigned int index)
   if (largest != index)
   {
     std::swap(arr[index], arr[largest]);
-    heapify<T>(arr, N, largest);
+    heapify(arr, N, largest);
   }
 }
 
@@ -95,15 +95,15 @@ void heapify(std::vector<T> &arr, unsigned int N, unsigned int index)
 void Server::SortRequirement()
 {
   // Build max heap
-  for (unsigned int i = mListTasks.size() / 2 - 1; i >= 0; i--)
+  for (int i = mListTasks.size() / 2 - 1; i >= 0; i--)
   {
-    heapify<uint8_t>(mListTasks, mListTasks.size(), i);
+    heapify(mListTasks, mListTasks.size(), i);
   }
 
-  for (unsigned int i = mListTasks.size() - 1; i > 0; i--)
+  for (int i = mListTasks.size() - 1; i > 0; i--)
   {
     std::swap(mListTasks[0], mListTasks[i]);
-    heapify<uint8_t>(mListTasks, i, 0);
+    heapify(mListTasks, i, 0);
   }
 }
 
