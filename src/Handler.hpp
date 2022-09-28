@@ -21,7 +21,7 @@ private:
   std::string         mName;
   uint16_t            mWorkLog;
   uint16_t            mTotalWork;
-  SafeQueue<uint8_t> mTaskQueue;
+  SafeQueue<uint8_t>  mTaskQueue;
   std::string         mLogFile;
   void                ExecuteTaskProc();
   Server &rServer;

@@ -7,64 +7,55 @@
 /' Objects '/
 
 class Handler {
-	-mName : std::string
-	-mState : handler_state_e
-	-mTotalWork : uint64_t
-	-mWorkLog : uint64_t
-	-mTaskQueue : SafeQueue<uint64_t>
-	-ServerNotifier : void*
 	+Handler()
 	+Handler(void* serverNotifier)
 	+~Handler()
+	-mTaskQueue : SafeQueue<uint64_t>
 	-CheckAvailableTask() : bool
-	-SetState(handler_state_e newState) : void
-	+ReceiveTask(uint64_t task) : void
-	+ExecuteTask() : void
 	+GetName() : std::string
-	+GetState() : handler_state_e
-	+GetWorkLog() : uint64_t
+	-mName : std::string
 	+GetTotalWork() : uint64_t
+	+GetWorkLog() : uint64_t
+	-mTotalWork : uint64_t
+	-mWorkLog : uint64_t
+	+ExecuteTask() : void
 	+LogWork(uint64_t workLog) : void
+	+ReceiveTask(uint64_t task) : void
+	-ServerNotifier : void*
 }
 
 
 class SafeQueue <template<class T>> {
-	-q : std::queue<T>
-	-m : mutable std::mutex
-	-c : std::condition_variable
 	+SafeQueue()
 	+~SafeQueue()
-	+empty() : bool {query}
-	+size() : unsigned long {query}
-	+front() : T
 	+back() : T
-	+push(T t) : void
+	+front() : T
 	+pop() : T
+	+empty() : bool {query}
+	-m : mutable std::mutex
+	-c : std::condition_variable
+	-q : std::queue<T>
+	+size() : unsigned long {query}
+	+push(T t) : void
 }
 
 
 class Server {
-	-mRequirementPath : std::string
-	-mListHandlers : std::vector<HandlerPtr>
-	-mListTasks : SafeQueue<uint64_t>
-	-mNumberOfHandlers : uint8_t
-	-mMaxHandlers : uint8_t
 	+Server()
 	+Server(std::string& rFilePath)
 	+~Server()
-	+UpdateRequirementPath(std::string& rFilePath) : void
-	+GetRequirement() : void
-	+SortRequirement() : void
+	-mListTasks : SafeQueue<uint64_t>
+	-mRequirementPath : std::string
+	-mListHandlers : std::vector<HandlerPtr>
+	-mMaxHandlers : uint8_t
+	-mNumberOfHandlers : uint8_t
 	+AssignTask() : void
 	+DecreaseNumberOfActiveHandlers() : void
-	+WriteReport() : void
+	+GetRequirement() : void
 	+ReadReport() : void
-}
-
-
-enum HANDLER_STATE_E {
-	ACTIVE
-	INACTIVE
+	+SortRequirement() : void
+	+UpdateRequirementPath(std::string& rFilePath) : void
+	+WriteReport() : void
 }
 
 

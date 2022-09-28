@@ -46,6 +46,7 @@ bool Handler::CheckAvailableTask()
 void Handler::ReceiveTask(uint8_t task)
 {
   mTaskQueue.push(task);
+  mTotalWork += task;
 }
 
 /**
@@ -56,12 +57,14 @@ void Handler::ExecuteTaskProc()
 {
   while (CheckAvailableTask())
   {
-    printf("Name: %s - %lu\n", mName.c_str(), mTaskQueue.front());
+    printf("Name: %s - Task time: %lu\n", mName.c_str(), mTaskQueue.front());
     std::this_thread::sleep_for(std::chrono::seconds(mTaskQueue.front()));
     LogWork(mTaskQueue.front());
     mTaskQueue.pop();
   }
+  rServer.DecreaseNumberOfActiveHandlers();
 }
+
 
 /**
  * @brief
@@ -69,11 +72,11 @@ void Handler::ExecuteTaskProc()
  */
 void Handler::ExecuteTask()
 {
-  // std::thread ExecuteTaskThread(&Handler::ExecuteTaskProc, this);
-  // ExecuteTaskThread.join();
-  ExecuteTaskProc();
+  std::thread ExecuteTaskThread(&Handler::ExecuteTaskProc, this);
+  ExecuteTaskThread.join();
+  // ExecuteTaskProc();
   // NotifyServer
-  rServer.DecreaseNumberOfActiveHandlers();
+  
 }
 
 /**
@@ -86,7 +89,7 @@ void Handler::LogWork(uint8_t workLog)
   std::ofstream file(mLogFile, std::ios::app);
   if (file.is_open())
   {
-    file << "Name: " << this->GetName() << " - Log work: " << workLog << "\n";
+    file << "Name: " << this->GetName() << " - Log work: " << std::to_string(workLog) << "\n";
     mWorkLog += workLog;
     file.close();
   }

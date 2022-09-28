@@ -13,6 +13,7 @@ cmake_minimum_required (VERSION 3.0)
 project (NevonexHackathon VERSION 1.1.0 LANGUAGES CXX)
 
 SET(TARGET_NAME ${PROJECT_NAME}_${PROJECT_VERSION})
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup(KEEP_RPATHS) #required

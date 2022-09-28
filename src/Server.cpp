@@ -125,8 +125,8 @@ void Server::AssignTask()
       HandlerPtr new_handler = std::make_shared<Handler>(std::to_string(i), *this, mLogFile);
       mListHandlers.push_back(new_handler);
       auto task = mListTasks.begin();
-      mListHandlers.back()->ReceiveTask(*task);
-      mListHandlers.back()->ExecuteTask();
+      new_handler->ReceiveTask(*task);
+      new_handler->ExecuteTask();
       mListTasks.erase(task);
       i++;
     }
