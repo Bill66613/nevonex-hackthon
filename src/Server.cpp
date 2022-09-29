@@ -17,11 +17,13 @@
 
 Server::Server()
     : mMaxHandlers(MAX_HANDLERS)
+    , mNumberOfHandlers(0)
 {
 }
 
 Server::Server(std::string &rFilePath, std::string &rLogFile)
 : mMaxHandlers(MAX_HANDLERS)
+, mNumberOfHandlers(0)
 , mRequirementPath(rFilePath)
 , mLogFile(rLogFile)
 {
@@ -119,9 +121,11 @@ void Server::AssignTask()
   int i = 1;
   while (!mListTasks.empty())
   {
-    if (mListHandlers.size() < 10)
+    // if (mListHandlers.size() < 10)
+    if (mNumberOfHandlers < 10)
     {
       // Create handler
+      mNumberOfHandlers++;
       HandlerPtr new_handler = std::make_shared<Handler>(std::to_string(i), *this, mLogFile);
       mListHandlers.push_back(new_handler);
       auto task = mListTasks.begin();
@@ -158,9 +162,14 @@ void Server::AssignTask()
  */
 void Server::DecreaseNumberOfActiveHandlers()
 {
-  printf("[DEBUG] Decrease\n");
-  std::lock_guard<std::mutex> lk(this->mMutex);
+  // auto handler_pos = std::find(mListHandlers.begin(), mListHandlers.end(), handler);
+  // if (handler_pos != mListHandlers.end())
+  // {
+  //   mListHandlers.erase(handler_pos);
+  // }
   mNumberOfHandlers--;
+  printf("[DEBUG] Number Of Handlers Decreased, current number: %u\n", mNumberOfHandlers);
+  std::lock_guard<std::mutex> lk(this->mMutex);
 }
 
 /**
@@ -169,20 +178,20 @@ void Server::DecreaseNumberOfActiveHandlers()
  */
 void Server::WriteReport()
 {
-  while (true)
+  while (mNumberOfHandlers > 0)
   {
-    if (mNumberOfHandlers == 0)
-    {
-      break;
-    }
+    // printf("[DEBUG] hehe here num %u\n", mNumberOfHandlers);
+    std::this_thread::sleep_for(std::chrono::seconds(1));
   }
-  std::ofstream file(mRequirementPath, std::ofstream::out);
+  printf("[DEBUG] Start writing file\n");
+  std::ofstream file(mLogFile, std::ios::app);
   if (file.is_open())
   {
-    int i = 0;
     while (!mListHandlers.empty())
     {
-      file << "Name: " << mListHandlers[i]->GetName() << " - Worklog: " << mListHandlers[i]->GetWorkLog() << "\n";
+      auto handler = mListHandlers.begin();
+      file << "Name: " << handler->get()->GetName() << " - Worklog: " << std::to_string(handler->get()->GetWorkLog()) << "\n";
+      mListHandlers.erase(handler);
     }
     file.close();
   }

@@ -73,7 +73,7 @@ void Handler::ExecuteTaskProc()
 void Handler::ExecuteTask()
 {
   std::thread ExecuteTaskThread(&Handler::ExecuteTaskProc, this);
-  ExecuteTaskThread.join();
+  ExecuteTaskThread.detach();
   // ExecuteTaskProc();
   // NotifyServer
   

@@ -9,7 +9,7 @@ int main(int argc, char const *argv[])
   Boss.GetRequirement();
   Boss.SortRequirement();
   Boss.AssignTask();
-  // Boss.WriteReport(); // once the tasks are finished
-  // Boss.ReadReport(); // once the WriteReport is done
+  Boss.WriteReport(); // once the tasks are finished
+  Boss.ReadReport(); // once the WriteReport is done
   return 0;
 }
