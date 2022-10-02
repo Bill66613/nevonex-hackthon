@@ -9,7 +9,6 @@
  *
  */
 #include <thread>
-// #include <pthread.h>
 #include <chrono>
 #include <fstream>
 #include <iostream>
@@ -20,6 +19,8 @@ Handler::Handler(std::string name, Server &rServer, std::string &logFile)
 : mName("Handler " + name)
 , rServer(rServer)
 , mLogFile(logFile)
+, mTotalWork(0)
+, mWorkLogMs(0)
 {
 }
 
@@ -57,14 +58,20 @@ void Handler::ExecuteTaskProc()
 {
   while (CheckAvailableTask())
   {
-    printf("Name: %s - Task time: %lu\n", mName.c_str(), mTaskQueue.front());
+    printf("Name: %s - Doing task: %u\n", mName.c_str(), mTaskQueue.front());
+    typedef std::chrono::high_resolution_clock Time;
+    typedef std::chrono::milliseconds ms;
+    typedef std::chrono::duration<float> fsec;
+    auto t0 = Time::now();
     std::this_thread::sleep_for(std::chrono::seconds(mTaskQueue.front()));
-    LogWork(mTaskQueue.front());
+    auto t1 = Time::now();
+    fsec fs = t1 - t0;
+    ms d = std::chrono::duration_cast<ms>(fs);
+    LogWork(mTaskQueue.front(), d.count());
     mTaskQueue.pop();
   }
   rServer.DecreaseNumberOfActiveHandlers();
 }
-
 
 /**
  * @brief
@@ -74,23 +81,22 @@ void Handler::ExecuteTask()
 {
   std::thread ExecuteTaskThread(&Handler::ExecuteTaskProc, this);
   ExecuteTaskThread.detach();
-  // ExecuteTaskProc();
-  // NotifyServer
-  
 }
 
 /**
  * @brief
  *
- * @param workLog
+ * @param task
  */
-void Handler::LogWork(uint8_t workLog)
+void Handler::LogWork(uint8_t task, int64_t actualTime)
 {
+  mWorkLogMs += actualTime;
   std::ofstream file(mLogFile, std::ios::app);
   if (file.is_open())
   {
-    file << "Name: " << this->GetName() << " - Log work: " << std::to_string(workLog) << "\n";
-    mWorkLog += workLog;
+    file << "Name: " << this->GetName()
+         << " - Task: " << std::to_string(task)
+         << "(s) - Actual finish time: " << std::to_string(actualTime) << "(ms)\n";
     file.close();
   }
   else

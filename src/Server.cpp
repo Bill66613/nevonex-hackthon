@@ -16,9 +16,10 @@
 #include <vector>
 
 Server::Server()
-    : mMaxHandlers(MAX_HANDLERS)
-    , mNumberOfHandlers(0)
+: mMaxHandlers(MAX_HANDLERS)
+, mNumberOfHandlers(0)
 {
+  mTimeStart = Time::now();
 }
 
 Server::Server(std::string &rFilePath, std::string &rLogFile)
@@ -26,11 +27,38 @@ Server::Server(std::string &rFilePath, std::string &rLogFile)
 , mNumberOfHandlers(0)
 , mRequirementPath(rFilePath)
 , mLogFile(rLogFile)
+, mTotalWork(0)
 {
+  mTimeStart = Time::now();
+  std::ofstream file(mLogFile, std::ios::app);
+  if (file.is_open())
+  {
+    printf("[DEBUG] Clear log file\n");
+    file.clear();
+    file.close();
+  }
+  else
+  {
+    printf("[ERROR] Cannot open file\n");
+  }
 }
 
 Server::~Server()
 {
+  mTimeEnd = Time::now();
+  fsec fs = mTimeEnd - mTimeStart;
+  ms d = std::chrono::duration_cast<ms>(fs);
+  std::ofstream file(mLogFile, std::ios::app);
+  if (file.is_open())
+  {
+    file << "\nTotal Work: " << mTotalWork << " - Total time taken: " << std::to_string(d.count()) << "(ms)\n";
+    file << "\n===================== Server report =====================\n\n";
+    file.close();
+  }
+  else
+  {
+    printf("[ERROR] Cannot open file\n");
+  }
 }
 
 /**
@@ -58,6 +86,7 @@ void Server::GetRequirement()
     while (file >> number)
     {
       mListTasks.push_back(number);
+      mTotalWork += number;
     }
     file.close();
   }
@@ -80,8 +109,10 @@ void heapify(std::vector<T> &arr, unsigned int N, unsigned int index)
   unsigned int lc = 2 * index + 1;
   unsigned int rc = 2 * index + 2;
 
-  if (lc < N && arr[lc] > arr[largest]) largest = lc;
-  if (rc < N && arr[rc] > arr[largest]) largest = rc;
+  if (lc < N && arr[lc] > arr[largest])
+    largest = lc;
+  if (rc < N && arr[rc] > arr[largest])
+    largest = rc;
 
   if (largest != index)
   {
@@ -166,7 +197,10 @@ void Server::DecreaseNumberOfActiveHandlers()
   // if (handler_pos != mListHandlers.end())
   // {
   //   mListHandlers.erase(handler_pos);
+  //   handler_pos->~shared_ptr();
+  //   handler->~Handler();
   // }
+
   mNumberOfHandlers--;
   printf("[DEBUG] Number Of Handlers Decreased, current number: %u\n", mNumberOfHandlers);
   std::lock_guard<std::mutex> lk(this->mMutex);
@@ -187,10 +221,13 @@ void Server::WriteReport()
   std::ofstream file(mLogFile, std::ios::app);
   if (file.is_open())
   {
+    file << "\n===================== Server report =====================\n\n";
     while (!mListHandlers.empty())
     {
       auto handler = mListHandlers.begin();
-      file << "Name: " << handler->get()->GetName() << " - Worklog: " << std::to_string(handler->get()->GetWorkLog()) << "\n";
+      file << "Name: " << handler->get()->GetName()
+           << " - Total Work: " << handler->get()->GetTotalWork()
+           << "(s) - Time Taken: " << std::to_string(handler->get()->GetWorkLog()) << "(ms)\n";
       mListHandlers.erase(handler);
     }
     file.close();
