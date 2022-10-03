@@ -11,6 +11,5 @@ int main(int argc, char const *argv[])
   Boss.AssignTask();
   Boss.WriteReport(); // once the tasks are finished
   Boss.ReadReport(); // once the WriteReport is done
-  Boss.~Server();
   return 0;
 }

@@ -8,7 +8,7 @@
             "name": "g++-7 - Build and debug active file",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/bin/NevonexHackathon_1.1.0",
+            "program": "${workspaceFolder}/build/bin/NevonexHackathon_1.0.0",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

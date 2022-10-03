@@ -44,20 +44,6 @@ Server::Server(std::string &rFilePath, std::string &rLogFile)
 
 Server::~Server()
 {
-  mTimeEnd = Time::now();
-  fsec fs = mTimeEnd - mTimeStart;
-  ms d = std::chrono::duration_cast<ms>(fs);
-  std::ofstream file(mLogFile, std::ios::app);
-  if (file.is_open())
-  {
-    file << "\nTotal Work: " << mTotalWork << "(s) - Total time taken: " << std::to_string(d.count()) << "(ms)\n";
-    file << "\n===================== Server report =====================\n\n";
-    file.close();
-  }
-  else
-  {
-    printf("[ERROR] Cannot open file\n");
-  }
 }
 
 /**
@@ -229,6 +215,11 @@ void Server::WriteReport()
            << "(s) - Time Taken: " << std::to_string(handler->get()->GetWorkLog()) << "(ms)\n";
       mListHandlers.erase(handler);
     }
+    mTimeEnd = Time::now();
+    fsec fs = mTimeEnd - mTimeStart;
+    ms d = std::chrono::duration_cast<ms>(fs);
+    file << "\nTotal Work: " << mTotalWork << "(s) - Total time taken: " << std::to_string(d.count()) << "(ms)\n";
+    file << "\n===================== Server report =====================\n";
     file.close();
   }
   else

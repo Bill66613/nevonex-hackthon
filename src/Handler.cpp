@@ -58,7 +58,7 @@ void Handler::ExecuteTaskProc()
 {
   while (CheckAvailableTask())
   {
-    printf("Name: %s - Doing task: %u\n", mName.c_str(), mTaskQueue.front());
+    printf("Name: %s - Doing task: %u(s)\n", mName.c_str(), mTaskQueue.front());
     typedef std::chrono::high_resolution_clock Time;
     typedef std::chrono::milliseconds ms;
     typedef std::chrono::duration<float> fsec;
