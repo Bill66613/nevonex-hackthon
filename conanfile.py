@@ -5,7 +5,7 @@ import os
 class NevonexHackathon(ConanFile):
 
     name = "nevonex-hackathon"
-    version = "1.1"
+    version = "1.0.0"
     license = "commercial"
     author = "Nguyen Truong Minh Hoang (MS/EJV31-PS), FIXED-TERM Tran Hoai Duong (MS/EJV31-PS), Lam Hau Huong (MS/EJV31-PS)"
     description = "Nevonex Hackathon 1.0"

@@ -30,11 +30,10 @@ Server::Server(std::string &rFilePath, std::string &rLogFile)
 , mTotalWork(0)
 {
   mTimeStart = Time::now();
-  std::ofstream file(mLogFile, std::ios::app);
+  std::ofstream file(mLogFile, std::ios::trunc);
   if (file.is_open())
   {
     printf("[DEBUG] Clear log file\n");
-    file.clear();
     file.close();
   }
   else
@@ -51,7 +50,7 @@ Server::~Server()
   std::ofstream file(mLogFile, std::ios::app);
   if (file.is_open())
   {
-    file << "\nTotal Work: " << mTotalWork << " - Total time taken: " << std::to_string(d.count()) << "(ms)\n";
+    file << "\nTotal Work: " << mTotalWork << "(s) - Total time taken: " << std::to_string(d.count()) << "(ms)\n";
     file << "\n===================== Server report =====================\n\n";
     file.close();
   }
@@ -252,6 +251,7 @@ void Server::ReadReport()
     {
       std::cout << line << std::endl;
     }
+    file.close();
   }
   else
   {
