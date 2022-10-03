@@ -17,7 +17,7 @@
 #define MAX_HANDLERS 10
 
 typedef std::chrono::steady_clock::time_point TimePoint;
-typedef std::chrono::high_resolution_clock Time;
+typedef std::chrono::steady_clock Time;
 typedef std::chrono::milliseconds ms;
 typedef std::chrono::duration<float> fsec;
 
