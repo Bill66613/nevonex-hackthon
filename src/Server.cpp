@@ -14,11 +14,14 @@
 #include <iostream>
 #include <thread>
 #include <vector>
+// Testing
+#include <unistd.h>
 
 Server::Server()
-    : mMaxHandlers(MAX_HANDLERS)
-    , mNumberOfHandlers(0)
+: mMaxHandlers(MAX_HANDLERS)
+, mNumberOfHandlers(0)
 {
+  mTimeStart = Time::now();
 }
 
 Server::Server(std::string &rFilePath, std::string &rLogFile)
@@ -26,7 +29,19 @@ Server::Server(std::string &rFilePath, std::string &rLogFile)
 , mNumberOfHandlers(0)
 , mRequirementPath(rFilePath)
 , mLogFile(rLogFile)
+, mTotalWork(0)
 {
+  mTimeStart = Time::now();
+  std::ofstream file(mLogFile, std::ios::trunc);
+  if (file.is_open())
+  {
+    printf("[DEBUG] Clear log file\n");
+    file.close();
+  }
+  else
+  {
+    printf("[ERROR] Cannot open file\n");
+  }
 }
 
 Server::~Server()
@@ -41,6 +56,14 @@ Server::~Server()
 void Server::UpdateRequirementPath(std::string &rFilePath)
 {
   mRequirementPath = rFilePath;
+}
+/**
+ * @brief Check whether the Server has done all the task
+ *
+ * @param rFilePath
+ */
+bool Server::IsEmptyTask(){
+  return (this->mListTasks.empty()) ? true : false;
 }
 
 /**
@@ -58,6 +81,7 @@ void Server::GetRequirement()
     while (file >> number)
     {
       mListTasks.push_back(number);
+      mTotalWork += number;
     }
     file.close();
   }
@@ -80,8 +104,10 @@ void heapify(std::vector<T> &arr, unsigned int N, unsigned int index)
   unsigned int lc = 2 * index + 1;
   unsigned int rc = 2 * index + 2;
 
-  if (lc < N && arr[lc] > arr[largest]) largest = lc;
-  if (rc < N && arr[rc] > arr[largest]) largest = rc;
+  if (lc < N && arr[lc] > arr[largest])
+    largest = lc;
+  if (rc < N && arr[rc] > arr[largest])
+    largest = rc;
 
   if (largest != index)
   {
@@ -119,39 +145,41 @@ void Server::AssignTask()
 {
   printf("[INFO] Assigning requirements\n");
   int i = 1;
+  int j = 0;
   while (!mListTasks.empty())
   {
     // if (mListHandlers.size() < 10)
+    auto task = mListTasks.begin();
     if (mNumberOfHandlers < 10)
     {
       // Create handler
       mNumberOfHandlers++;
-      HandlerPtr new_handler = std::make_shared<Handler>(std::to_string(i), *this, mLogFile);
+      HandlerPtr new_handler = std::make_shared<Handler>(std::to_string(i++), *this, mLogFile);
       mListHandlers.push_back(new_handler);
-      auto task = mListTasks.begin();
       new_handler->ReceiveTask(*task);
-      new_handler->ExecuteTask();
-      mListTasks.erase(task);
-      i++;
+      new_handler->ExecuteTask(); 
     }
     else
     {
       // Assign to an existing handler
       // Get the min total work of handlers
-      uint64_t min_work = UINT64_MAX;
-      HandlerPtr chosen_handler;
-      for (auto &handler_itr : mListHandlers)
-      {
-        if (min_work > handler_itr->GetTotalWork())
-        {
-          min_work = handler_itr->GetTotalWork();
-          chosen_handler = handler_itr;
-        }
-      }
-      auto task = mListTasks.begin();
-      chosen_handler->ReceiveTask(*task);
-      mListTasks.erase(task);
+      // uint64_t min_work = UINT64_MAX;
+      // HandlerPtr chosen_handler;
+      // for (auto &handler_itr : mListHandlers)
+      // {
+      //   if (min_work > handler_itr->GetTotalWork())
+      //   {
+      //     min_work = handler_itr->GetTotalWork();
+      //     chosen_handler = handler_itr;
+      //   }
+      // }
+      // chosen_handler->ReceiveTask(*task);
+      // Each Handler will have 1 task
+      // sleep(5); 
+      mListHandlers[(j++) % MAX_HANDLERS]->ReceiveTask(*task);
     }
+    mListTasks.erase(task);
+
   }
   printf("[INFO] Finish assigning requirements\n");
 }
@@ -166,7 +194,10 @@ void Server::DecreaseNumberOfActiveHandlers()
   // if (handler_pos != mListHandlers.end())
   // {
   //   mListHandlers.erase(handler_pos);
+  //   handler_pos->~shared_ptr();
+  //   handler->~Handler();
   // }
+
   mNumberOfHandlers--;
   printf("[DEBUG] Number Of Handlers Decreased, current number: %u\n", mNumberOfHandlers);
   std::lock_guard<std::mutex> lk(this->mMutex);
@@ -187,12 +218,20 @@ void Server::WriteReport()
   std::ofstream file(mLogFile, std::ios::app);
   if (file.is_open())
   {
+    file << "\n===================== Server report =====================\n\n";
     while (!mListHandlers.empty())
     {
       auto handler = mListHandlers.begin();
-      file << "Name: " << handler->get()->GetName() << " - Worklog: " << std::to_string(handler->get()->GetWorkLog()) << "\n";
+      file << "Name: " << handler->get()->GetName()
+           << " - Total Work: " << handler->get()->GetTotalWork()
+           << "(s) - Time Taken: " << std::to_string(handler->get()->GetWorkLog()) << "(ms)\n";
       mListHandlers.erase(handler);
     }
+    mTimeEnd = Time::now();
+    fsec fs = mTimeEnd - mTimeStart;
+    ms d = std::chrono::duration_cast<ms>(fs);
+    file << "\nTotal Work: " << mTotalWork << "(s) - Total time taken: " << std::to_string(d.count()) << "(ms)\n";
+    file << "\n===================== Server report =====================\n";
     file.close();
   }
   else
@@ -215,6 +254,7 @@ void Server::ReadReport()
     {
       std::cout << line << std::endl;
     }
+    file.close();
   }
   else
   {

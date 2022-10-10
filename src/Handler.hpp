@@ -19,7 +19,7 @@ class Handler
 {
 private:
   std::string         mName;
-  uint16_t            mWorkLog;
+  int64_t             mWorkLogMs;
   uint16_t            mTotalWork;
   SafeQueue<uint8_t>  mTaskQueue;
   std::string         mLogFile;
@@ -38,9 +38,9 @@ public:
   void            ReceiveTask (uint8_t task);
   void            ExecuteTask ();
   std::string     GetName     () { return mName; };
-  uint16_t        GetWorkLog  () { return mWorkLog; };
+  int64_t         GetWorkLog  () { return mWorkLogMs; };
   uint16_t        GetTotalWork() { return mTotalWork; };
-  void            LogWork     (uint8_t workLog);
+  void            LogWork     (uint8_t task, int64_t actualTime);
 };
 
 typedef std::shared_ptr<Handler> HandlerPtr;

@@ -19,7 +19,7 @@ include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup(KEEP_RPATHS) #required
 
 include_directories(src/)
-
+set(CMAKE_BUILD_TYPE "Debug")
 add_executable(
     ${TARGET_NAME}
     src/main.cpp

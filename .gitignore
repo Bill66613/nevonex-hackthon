@@ -1,3 +1,5 @@
 # ignore all build files
 **/*build/
 **/*bin/
+/latex/
+/html/

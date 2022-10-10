@@ -1,0 +1,31 @@
+Name: Handler 1 - Task: 1(s) - Actual finish time: 1000(ms)
+Name: Handler 6 - Task: 1(s) - Actual finish time: 1000(ms)
+Name: Handler 4 - Task: 1(s) - Actual finish time: 1000(ms)
+Name: Handler 3 - Task: 1(s) - Actual finish time: 1000(ms)
+Name: Handler 5 - Task: 1(s) - Actual finish time: 1000(ms)
+Name: Handler 7 - Task: 1(s) - Actual finish time: 1000(ms)
+Name: Handler 2 - Task: 1(s) - Actual finish time: 1000(ms)
+Name: Handler 10 - Task: 1(s) - Actual finish time: 1000(ms)
+Name: Handler 9 - Task: 1(s) - Actual finish time: 1000(ms)
+Name: Handler 8 - Task: 1(s) - Actual finish time: 1000(ms)
+Name: Handler 1 - Task: 2(s) - Actual finish time: 2012(ms)
+Name: Handler 2 - Task: 3(s) - Actual finish time: 3000(ms)
+Name: Handler 3 - Task: 4(s) - Actual finish time: 4000(ms)
+Name: Handler 4 - Task: 5(s) - Actual finish time: 5020(ms)
+
+===================== Server report =====================
+
+Name: Handler 1 - Total Work: 3(s) - Time Taken: 3012(ms)
+Name: Handler 2 - Total Work: 4(s) - Time Taken: 4000(ms)
+Name: Handler 3 - Total Work: 5(s) - Time Taken: 5000(ms)
+Name: Handler 4 - Total Work: 6(s) - Time Taken: 6020(ms)
+Name: Handler 5 - Total Work: 1(s) - Time Taken: 1000(ms)
+Name: Handler 6 - Total Work: 1(s) - Time Taken: 1000(ms)
+Name: Handler 7 - Total Work: 1(s) - Time Taken: 1000(ms)
+Name: Handler 8 - Total Work: 1(s) - Time Taken: 1000(ms)
+Name: Handler 9 - Total Work: 1(s) - Time Taken: 1000(ms)
+Name: Handler 10 - Total Work: 1(s) - Time Taken: 1000(ms)
+
+Total Work: 24(s) - Total time taken: 7024(ms)
+
+===================== Server report =====================

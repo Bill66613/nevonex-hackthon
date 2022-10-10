@@ -1,0 +1,38 @@
+Name: Handler 2 - Task: 1(s) - Actual finish time: 1000(ms)
+Name: Handler 3 - Task: 1(s) - Actual finish time: 1000(ms)
+Name: Handler 10 - Task: 1(s) - Actual finish time: 1000(ms)
+Name: Handler 7 - Task: 1(s) - Actual finish time: 1000(ms)
+Name: Handler 1 - Task: 1(s) - Actual finish time: 1001(ms)
+Name: Handler 6 - Task: 1(s) - Actual finish time: 1000(ms)
+Name: Handler 8 - Task: 1(s) - Actual finish time: 1000(ms)
+Name: Handler 4 - Task: 1(s) - Actual finish time: 1000(ms)
+Name: Handler 5 - Task: 1(s) - Actual finish time: 1000(ms)
+Name: Handler 9 - Task: 1(s) - Actual finish time: 1000(ms)
+Name: Handler 2 - Task: 2(s) - Actual finish time: 2017(ms)
+Name: Handler 3 - Task: 3(s) - Actual finish time: 3006(ms)
+Name: Handler 4 - Task: 4(s) - Actual finish time: 4014(ms)
+Name: Handler 5 - Task: 5(s) - Actual finish time: 5000(ms)
+Name: Handler 6 - Task: 6(s) - Actual finish time: 6018(ms)
+Name: Handler 7 - Task: 7(s) - Actual finish time: 7000(ms)
+Name: Handler 8 - Task: 8(s) - Actual finish time: 8000(ms)
+Name: Handler 9 - Task: 9(s) - Actual finish time: 9001(ms)
+Name: Handler 1 - Task: 10(s) - Actual finish time: 10005(ms)
+Name: Handler 10 - Task: 10(s) - Actual finish time: 10006(ms)
+Name: Handler 2 - Task: 10(s) - Actual finish time: 10003(ms)
+
+===================== Server report =====================
+
+Name: Handler 1 - Total Work: 11(s) - Time Taken: 11006(ms)
+Name: Handler 2 - Total Work: 13(s) - Time Taken: 13020(ms)
+Name: Handler 3 - Total Work: 4(s) - Time Taken: 4006(ms)
+Name: Handler 4 - Total Work: 5(s) - Time Taken: 5014(ms)
+Name: Handler 5 - Total Work: 6(s) - Time Taken: 6000(ms)
+Name: Handler 6 - Total Work: 7(s) - Time Taken: 7018(ms)
+Name: Handler 7 - Total Work: 8(s) - Time Taken: 8000(ms)
+Name: Handler 8 - Total Work: 9(s) - Time Taken: 9000(ms)
+Name: Handler 9 - Total Work: 10(s) - Time Taken: 10001(ms)
+Name: Handler 10 - Total Work: 11(s) - Time Taken: 11006(ms)
+
+Total Work: 84(s) - Total time taken: 13054(ms)
+
+===================== Server report =====================

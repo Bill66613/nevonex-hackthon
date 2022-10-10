@@ -14,8 +14,12 @@
 #include "SafeQueue.h"
 #include "Handler.hpp"
 
-
 #define MAX_HANDLERS 10
+
+typedef std::chrono::steady_clock::time_point TimePoint;
+typedef std::chrono::steady_clock Time;
+typedef std::chrono::milliseconds ms;
+typedef std::chrono::duration<float> fsec;
 
 class Server
 {
@@ -26,7 +30,10 @@ private:
   std::vector<uint8_t>    mListTasks;
   uint8_t                 mNumberOfHandlers;
   uint8_t                 mMaxHandlers;
+  uint16_t                mTotalWork;
   std::mutex              mMutex;
+  TimePoint               mTimeStart;
+  TimePoint               mTimeEnd;
 
 public:
   Server ();
@@ -40,4 +47,6 @@ public:
   void DecreaseNumberOfActiveHandlers();
   void WriteReport                   ();
   void ReadReport                    ();
+public:
+  bool IsEmptyTask                   ();
 };
