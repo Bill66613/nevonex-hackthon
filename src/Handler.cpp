@@ -36,7 +36,7 @@ Handler::~Handler()
  */
 bool Handler::CheckAvailableTask()
 {
-  return (mTaskQueue.empty() ? false : true);
+  return (mTaskQueue.empty() && rServer.IsEmptyTask())? false : true;
 }
 
 /**
@@ -58,17 +58,24 @@ void Handler::ExecuteTaskProc()
 {
   while (CheckAvailableTask())
   {
-    printf("Name: %s - Doing task: %u(s)\n", mName.c_str(), mTaskQueue.front());
-    typedef std::chrono::high_resolution_clock Time;
-    typedef std::chrono::milliseconds ms;
-    typedef std::chrono::duration<float> fsec;
-    auto t0 = Time::now();
-    std::this_thread::sleep_for(std::chrono::seconds(mTaskQueue.front()));
-    auto t1 = Time::now();
-    fsec fs = t1 - t0;
-    ms d = std::chrono::duration_cast<ms>(fs);
-    LogWork(mTaskQueue.front(), d.count());
-    mTaskQueue.pop();
+    if(mTaskQueue.size() > 0)
+    {
+      printf("Name: %s - Doing task: %u(s)\n", mName.c_str(), mTaskQueue.front());
+      typedef std::chrono::high_resolution_clock Time;
+      typedef std::chrono::milliseconds ms;
+      typedef std::chrono::duration<float> fsec;
+      auto t0 = Time::now();
+      std::this_thread::sleep_for(std::chrono::seconds(mTaskQueue.front()));
+      auto t1 = Time::now();
+      fsec fs = t1 - t0;
+      ms d = std::chrono::duration_cast<ms>(fs);
+      LogWork(mTaskQueue.front(), d.count());
+      mTaskQueue.pop();
+    }
+    else
+    {
+      std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    }
   }
   rServer.DecreaseNumberOfActiveHandlers();
 }

@@ -83,6 +83,15 @@ void Server::GetRequirement()
 }
 
 /**
+ * @brief Check whether the Server has done all the task
+ *
+ * @param rFilePath
+ */
+bool Server::IsEmptyTask(){
+    return (this->mListTasks.empty()) ? true : false;
+}
+
+/**
  * @brief Helping function for sort requirement: Heapify
  *  The left and right child cannot exceed the root value
  *
@@ -134,40 +143,24 @@ void Server::SortRequirement()
 void Server::AssignTask()
 {
   printf("[INFO] Assigning requirements\n");
-  int i = 1;
+  int i = 1,j = 0;
   while (!mListTasks.empty())
   {
-    // if (mListHandlers.size() < 10)
+    auto task = mListTasks.begin();
     if (mNumberOfHandlers < 10)
     {
       // Create handler
       mNumberOfHandlers++;
-      HandlerPtr new_handler = std::make_shared<Handler>(std::to_string(i), *this, mLogFile);
+      HandlerPtr new_handler = std::make_shared<Handler>(std::to_string(i++), *this, mLogFile);
       mListHandlers.push_back(new_handler);
-      auto task = mListTasks.begin();
       new_handler->ReceiveTask(*task);
       new_handler->ExecuteTask();
-      mListTasks.erase(task);
-      i++;
     }
     else
     {
-      // Assign to an existing handler
-      // Get the min total work of handlers
-      uint64_t min_work = UINT64_MAX;
-      HandlerPtr chosen_handler;
-      for (auto &handler_itr : mListHandlers)
-      {
-        if (min_work > handler_itr->GetTotalWork())
-        {
-          min_work = handler_itr->GetTotalWork();
-          chosen_handler = handler_itr;
-        }
-      }
-      auto task = mListTasks.begin();
-      chosen_handler->ReceiveTask(*task);
-      mListTasks.erase(task);
+      mListHandlers[(j++) % MAX_HANDLERS]->ReceiveTask(*task);
     }
+    mListTasks.erase(task);
   }
   printf("[INFO] Finish assigning requirements\n");
 }
@@ -178,6 +171,7 @@ void Server::AssignTask()
  */
 void Server::DecreaseNumberOfActiveHandlers()
 {
+  std::lock_guard<std::mutex> lk(this->mMutex);
   // auto handler_pos = std::find(mListHandlers.begin(), mListHandlers.end(), handler);
   // if (handler_pos != mListHandlers.end())
   // {
@@ -188,7 +182,6 @@ void Server::DecreaseNumberOfActiveHandlers()
 
   mNumberOfHandlers--;
   printf("[DEBUG] Number Of Handlers Decreased, current number: %u\n", mNumberOfHandlers);
-  std::lock_guard<std::mutex> lk(this->mMutex);
 }
 
 /**

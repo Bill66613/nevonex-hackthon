@@ -3,8 +3,8 @@
 
 int main(int argc, char const *argv[])
 {
-  std::string filePath = "../../src/requirement.txt";
-  std::string logFile = "../../src/logfile.txt";
+  std::string filePath = "../src/requirement.txt";
+  std::string logFile = "../src/logfile.txt";
   Server Boss(filePath, logFile);
   Boss.GetRequirement();
   Boss.SortRequirement();

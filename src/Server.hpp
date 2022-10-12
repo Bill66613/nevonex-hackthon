@@ -47,4 +47,6 @@ public:
   void DecreaseNumberOfActiveHandlers();
   void WriteReport                   ();
   void ReadReport                    ();
+public:
+  bool IsEmptyTask                   ();
 };
